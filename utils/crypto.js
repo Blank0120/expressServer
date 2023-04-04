@@ -34,7 +34,7 @@ function getSelfSignCert(keys) {
 	// self-sign certificate
 	cert.sign(keys.privateKey);
 	const pemCert = pki.certificateToPem(cert);
-	return pemCert.replace(/-----.*?-----/g, '');
+	return pemCert;
 }
 
 function getSignature(plaintext, hash, privateKey) {
@@ -46,10 +46,38 @@ function getSignature(plaintext, hash, privateKey) {
 	return forge.util.bytesToHex(sign);
 }
 
-function randomString(length, chars) {
+function getRandomString(length, chars) {
 	var result = '';
 	for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
 	return result;
 }
 
-module.exports = { getSelfSignCert, getRsakeyPair, getSignature, randomString }
+function getSignedData(data, signer) {
+	var result = '';
+	try {
+		// create PKCS#7 signed data
+		var p7 = forge.pkcs7.createSignedData();
+		p7.content = forge.util.createBuffer(data, 'utf8');
+
+		p7.addCertificate(signer.certificate);
+		p7.addSigner({
+			key: signer.keys.privateKey,
+			certificate: signer.certificate,
+			digestAlgorithm: forge.pki.oids.sha1,
+		});
+
+		p7.sign();
+
+		result = forge.pkcs7.messageToPem(p7);
+		console.log('Signed PKCS #7 message:\n' + result);
+	} catch (ex) {
+		if (ex.stack) {
+			console.log(ex.stack);
+		} else {
+			console.log('Error', ex);
+		}
+	}
+	return result;
+}
+
+module.exports = { getSelfSignCert, getRsakeyPair, getSignature, getRandomString, getSignedData }

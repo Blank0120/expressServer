@@ -17,6 +17,6 @@ app.use(express.urlencoded({extended: true}))
 
 app.use('/user', UserRouter)
 
-app.listen(8089, (req, res, next) => {
-    console.log("server is listening on 8089 port")
+app.listen(80, (req, res, next) => {
+    console.log("server is listening on 80 port");
 })
