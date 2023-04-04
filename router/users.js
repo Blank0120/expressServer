@@ -21,7 +21,8 @@ router.post('/passwordAuth', (req, res, next) => {
     res.json({
         code: 200,
         message: "user login success",
-        redirectUrl: `http://127.0.0.1:8080/certAuth.html?rString=${rString}`
+        rString,
+        // redirectUrl: `./certAuth.html?rString=${rString}`
     });
 })
 
@@ -30,7 +31,7 @@ router.post('/certAuth', (req, res, next) => {
     res.json({
         code: 200,
         message: "certAuth success",
-        redirectUrl: `http://127.0.0.1:8080/welcome.html`
+        // redirectUrl: `./welcome.html`
     });
 })
 
