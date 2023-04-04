@@ -16,29 +16,37 @@ router.post('/login', (req, res, next) => {
 })
 
 router.post('/passwordAuth', (req, res, next) => {
-    const { email, password, checkSum } = req.body;
-    console.log(email, password);
-    if (email === 'test@test.com' && password === "test") {
+    const { encryptedEmail, encryptedPassword, checkSum } = req.body;
+    // console.log(encryptedEmail, encryptedPassword);
+    if (!encryptedEmail || !encryptedPassword) {
+        res.json({
+            code: 500,
+            message: "Please fill your email or password"
+        });
+        return;
+    }
+    if (cryptoUtils.SM4Decrypt(encryptedEmail) === 'test@test.com' && cryptoUtils.SM4Decrypt(encryptedPassword) === "test") {
         const rString = cryptoUtils.getRandomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ=+/');
+        console.log(rString);
         res.json({
             code: 200,
             message: "user login success",
-            rString,
-            // redirectUrl: `./certAuth.html?rString=${rString}`
+            rString: cryptoUtils.SM4Encrypt(rString)
+            // redirectUrl: `./auth.html?rString=${rString}`
         });
     } else {
         res.json({
             code: 404,
-            message: "邮箱或密码错误",
+            message: "邮箱地址或密码错误",
         });
     }
 })
 
-router.post('/certAuth', (req, res, next) => {
+router.post('/auth', (req, res, next) => {
     console.log(req.body);
     res.json({
         code: 200,
-        message: "certAuth success",
+        message: "auth success",
         // redirectUrl: `./welcome.html`
     });
 })
@@ -69,6 +77,29 @@ router.get('/getRandomStr', (req, res, next) => {
     const signedData = cryptoUtils.getSignedData(rString, signer);
 
     res.json({ code: 200, signedData, randomString: rString });
+})
+
+router.get('/dh', (req, res, next) => {
+    const power = (a, b, p) => {
+        if (b == 1)
+            return a;
+        else
+            return ((Math.pow(a, b)) % p);
+    }
+    const getRandom = (min, max) => {
+        return Math.floor(Math.random() * max) + min;
+    }
+    const P = 98764321261;
+    const G = 7;
+    const b = getRandom(3, 10);
+
+    const y = power(G, b, P);
+
+    console.log("x ====> ", req.query.x);
+    const kb = power(req.query.x, b, P);
+    console.log("kb ====> ", kb);
+
+    res.json({ code: 200, y });
 })
 
 module.exports = router

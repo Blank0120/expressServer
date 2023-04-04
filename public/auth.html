@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="author" content="Kodinger">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>证书认证</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="css/my-login.css">
+</head>
+
+<body class="my-login-page">
+	<section class="h-100">
+		<div class="container h-100">
+			<div class="row justify-content-md-center h-100">
+				<div class="card-wrapper">
+					<div class="brand">
+						<img src="img/logo.jpg" alt="">
+					</div>
+					<div class="card fat">
+						<div class="card-body">
+							<h4 class="card-title">证书认证</h4>
+							<form method="POST" class="my-login-validation" novalidate="" id="auth_form">
+								<div class="form-group">
+									<label for="randomString">请对以下随机数进行操作</label>
+									<input id="randomString" type="text" class="form-control" name="randomString"
+										required autofocus readonly>
+								</div>
+
+								<div class="form-group">
+									<label for="hmac">选择算法</label>
+									<select name="hmac" id="hmac" class="form-control" required>
+										<option value="">--请选择具体的算法--</option>
+										<option value="MD5">HMAC-MD5</option>
+										<option value="SHA1">HMAC-SHA1</option>
+										<option value="SM3">HMAC-SM3</option>
+										<option value="SHA256">HMAC-SHA256</option>
+										<option value="SHA384">HMAC-SHA384</option>
+										<option value="SHA512">HMAC-SHA512</option>
+									</select>
+									<div class="invalid-feedback">
+										未选择具体算法
+									</div>
+								</div>
+
+								<div class="form-group m-0">
+									<button type="submit" class="btn btn-primary btn-block">
+										认证
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="footer">
+						Copyright &copy; 2023 &mdash; Examination.com
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+		crossorigin="anonymous"></script>
+	<script src="https://nf404.github.io/crypto-api/crypto-api.min.js"></script>
+	<script src="./js/sm4.js"></script>
+	<script src="./js/ukey.js"></script>
+	<script src="./js/crypto.js"></script>
+	<script src="./js/my-login.js"></script>
+</body>
+
+</html>
+
+<script>
+	const randomString = document.getElementById("randomString");
+	const url = new URL(window.location.href);
+	const encryptRandom = url.searchParams.get("rString");
+	randomString.value = dencrypt(encryptRandom);
+</script>
+
+<script>
+	const auth_form = $("#auth_form")[0];
+	auth_form.addEventListener("submit", async (event) => {
+		event.preventDefault();
+		event.stopPropagation();
+
+		const randomString = $("#randomString")[0];
+		const hmac = $("#hmac")[0];
+
+		if (!hmac.value) {
+			alert("请选择具体的MAC算法");
+			return;
+		}
+
+		try {
+			const hasher = CryptoApi.getHasher('sha256');
+			const digest = CryptoApi.hmac(SM4Key, randomString.value, hasher);
+
+			$.ajax({
+				type: "post",
+				url: "/user/auth",
+				data: {
+					randomString: randomString.value,
+					hmac: hmac.value,
+					digest: digest,
+				},
+
+				dataType: "json",
+				success: function (resJson) {
+					if (resJson.code !== 200) {
+						alert(resJson.message);
+						return;
+					}
+					window.location.href = '/welcome.html';
+				},
+				error: function (result) {
+					alert(result.responseText);
+				}
+			});
+		} catch (error) {
+			console.warn(error);
+		}
+
+	})
+</script>
