@@ -1,4 +1,5 @@
 const forge = require('node-forge');
+const sm4 = require('sm-crypto').sm4;
 
 function getRsakeyPair(length) {
 	const pki = forge.pki;
@@ -80,4 +81,18 @@ function getSignedData(data, signer) {
 	return result;
 }
 
-module.exports = { getSelfSignCert, getRsakeyPair, getSignature, getRandomString, getSignedData }
+function SM4Encrypt(data) {
+	const SM4Key = '85ea44ba735bc287ecd3c9865997b0f1';
+	const iv = 'cf1ee0181c961b8fdd45e5b397114e2b';
+	const encryptData = sm4.encrypt(data, SM4Key, { mode: 'cbc', iv });
+	return encryptData;
+}
+
+function SM4Decrypt(data) {
+	const SM4Key = '85ea44ba735bc287ecd3c9865997b0f1';
+	const iv = 'cf1ee0181c961b8fdd45e5b397114e2b';
+	const decryptData = sm4.decrypt(data, SM4Key, { mode: 'cbc', iv });
+	return decryptData;
+}
+
+module.exports = { getSelfSignCert, getRsakeyPair, getSignature, getRandomString, getSignedData, SM4Encrypt, SM4Decrypt }
