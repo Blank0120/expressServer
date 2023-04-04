@@ -16,14 +16,22 @@ router.post('/login', (req, res, next) => {
 })
 
 router.post('/passwordAuth', (req, res, next) => {
-    console.log(req.body);
-    const rString = cryptoUtils.getRandomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ=+/');
-    res.json({
-        code: 200,
-        message: "user login success",
-        rString,
-        // redirectUrl: `./certAuth.html?rString=${rString}`
-    });
+    const { email, password, checkSum } = req.body;
+    console.log(email, password);
+    if (email === 'test@test.com' && password === "test") {
+        const rString = cryptoUtils.getRandomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ=+/');
+        res.json({
+            code: 200,
+            message: "user login success",
+            rString,
+            // redirectUrl: `./certAuth.html?rString=${rString}`
+        });
+    } else {
+        res.json({
+            code: 404,
+            message: "邮箱或密码错误",
+        });
+    }
 })
 
 router.post('/certAuth', (req, res, next) => {
