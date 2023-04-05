@@ -66,6 +66,7 @@
 		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
 		crossorigin="anonymous"></script>
 	<script src="https://nf404.github.io/crypto-api/crypto-api.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 	<script src="./js/sm4.js"></script>
 	<script src="./js/ukey.js"></script>
 	<script src="./js/crypto.js"></script>
@@ -78,9 +79,14 @@
 	const randomString = document.getElementById("randomString");
 	const url = new URL(window.location.href);
 	const encryptRandom = url.searchParams.get("rString");
+
+	if (!Cookies.get("user")) {
+		alert("请先用邮箱进行登录");
+		window.location.href = './index.html';
+	}
 	if (!encryptRandom) {
 		alert("尚未获取随机数");
-		window.location.href = './index.html'
+		window.location.href = './index.html';
 	} else {
 		randomString.value = decrypt(encryptRandom);
 	}
