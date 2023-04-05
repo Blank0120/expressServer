@@ -35,7 +35,6 @@ router.post('/passwordAuth', (req, res, next) => {
             code: 200,
             message: "user login success",
             rString: cryptoUtils.SM4Encrypt(rString, global.uuidMap.get(uuid))
-            // redirectUrl: `./auth.html?rString=${rString}`
         });
     } else {
         // login failed
@@ -50,8 +49,7 @@ router.post('/auth', (req, res, next) => {
     console.log(req.body);
     res.json({
         code: 200,
-        message: "auth success",
-        // redirectUrl: `./welcome.html`
+        message: "auth success"
     });
 })
 
