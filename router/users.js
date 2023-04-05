@@ -25,8 +25,8 @@ router.post('/passwordAuth', (req, res, next) => {
         });
         return;
     }
-    const TEMPKEY =  global.kb.padEnd(32, global.kb);
-    console.log('TEMPKEY','=======>', TEMPKEY);
+    const TEMPKEY = global.kb.padEnd(32, global.kb);
+    console.log('TEMPKEY', '=======>', TEMPKEY);
     if (cryptoUtils.SM4Decrypt(encryptedEmail, TEMPKEY) === 'test@test.com' && cryptoUtils.SM4Decrypt(encryptedPassword, TEMPKEY) === "test") {
         // login success
         global.uuidMap.set(uuid, TEMPKEY);
