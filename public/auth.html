@@ -26,7 +26,7 @@
 								<div class="form-group">
 									<label for="randomString">请对以下随机数进行操作</label>
 									<input id="randomString" type="text" class="form-control" name="randomString"
-										required autofocus readonly>
+										required readonly placeholder="no randomString">
 								</div>
 
 								<div class="form-group">
@@ -78,7 +78,12 @@
 	const randomString = document.getElementById("randomString");
 	const url = new URL(window.location.href);
 	const encryptRandom = url.searchParams.get("rString");
-	randomString.value = dencrypt(encryptRandom);
+	if (!encryptRandom) {
+		alert("尚未获取随机数");
+		window.location.href = './index.html'
+	} else {
+		randomString.value = decrypt(encryptRandom);
+	}
 </script>
 
 <script>
@@ -97,7 +102,7 @@
 
 		try {
 			const hasher = CryptoApi.getHasher('sha256');
-			const digest = CryptoApi.hmac(SM4Key, randomString.value, hasher);
+			const digest = CryptoApi.hmac(KEY, randomString.value, hasher);
 
 			$.ajax({
 				type: "post",

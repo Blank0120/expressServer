@@ -74,17 +74,24 @@ $(function () {
 		}
 		form.addClass('was-validated');
 
-		const [email, password] = form[0];
-
 		try {
+			await getSecret();
+
+			const [email, password] = form[0];
 			const encryptedEmail = await encrypt(email.value);
 			const encryptedPassword = await encrypt(password.value);
-			const checkSum = await HMAC_SM3(JSON.stringify({ encryptedEmail, encryptedPassword }));
+			const uuid = getUUID();
+			const checkSum = await HMAC_SM3(JSON.stringify({ encryptedEmail, encryptedPassword, uuid }));
 
 			$.ajax({
 				type: "post",
 				url: "/user/passwordAuth",
-				data: { encryptedEmail, encryptedPassword, checkSum },
+				data: {
+					encryptedEmail,
+					encryptedPassword,
+					uuid,
+					checkSum,
+				},
 
 				dataType: "json",
 				success: function (result) {
@@ -96,12 +103,14 @@ $(function () {
 						}
 						alert(user + " " + result.message);
 						Cookies.set("user", JSON.stringify({ user }));
+						Cookies.set("uuid", uuid);
 						console.log(result);
 						window.location.href = `/auth.html?rString=${result.rString}`;
-
 					} else {
 						$('h4[name="msg"]').html(result.message);
 						alert(result.message);
+						sessionStorage.clear();
+						KEY = '';
 					}
 
 				},
@@ -112,7 +121,7 @@ $(function () {
 			});
 
 		} catch (error) {
-			console.warn(error);
+			console.error(error);
 		}
 	});
 });
