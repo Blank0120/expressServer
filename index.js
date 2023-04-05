@@ -2,6 +2,12 @@
 const express = require('express');
 const cors = require('cors');
 
+// region
+// use map for uuid ===> secret
+global.uuidMap = new Map();
+
+// endregion
+
 //导入user的路由
 const UserRouter = require('./router/users');
 
@@ -17,8 +23,13 @@ app.use(cors());
 // urlencoded格式解析，解析后的结果放在了res.body属性中
 app.use(express.urlencoded({extended: true}));
 
+app.use((req, res, next) =>{
+    console.log(global.uuidMap);
+    next();
+})
+
 app.use('/user', UserRouter);
 
 app.listen(80, (req, res, next) => {
-    console.log("server is listening on 80 port");
+    console.log("server is listening on 80 port...");
 })

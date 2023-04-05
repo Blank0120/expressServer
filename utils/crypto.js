@@ -81,17 +81,15 @@ function getSignedData(data, signer) {
 	return result;
 }
 
-function SM4Encrypt(data) {
-	const SM4Key = '85ea44ba735bc287ecd3c9865997b0f1';
-	const iv = 'cf1ee0181c961b8fdd45e5b397114e2b';
-	const encryptData = sm4.encrypt(data, SM4Key, { mode: 'cbc', iv });
+function SM4Encrypt(data, KEY) {
+	const iv = '0'.repeat(32);
+	const encryptData = sm4.encrypt(data, KEY, { mode: 'cbc', iv });
 	return encryptData;
 }
 
-function SM4Decrypt(data) {
-	const SM4Key = '85ea44ba735bc287ecd3c9865997b0f1';
-	const iv = 'cf1ee0181c961b8fdd45e5b397114e2b';
-	const decryptData = sm4.decrypt(data, SM4Key, { mode: 'cbc', iv });
+function SM4Decrypt(data, KEY) {
+	const iv = '0'.repeat(32);
+	const decryptData = sm4.decrypt(data, KEY, { mode: 'cbc', iv });
 	return decryptData;
 }
 

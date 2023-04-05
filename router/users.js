@@ -16,7 +16,7 @@ router.post('/login', (req, res, next) => {
 })
 
 router.post('/passwordAuth', (req, res, next) => {
-    const { encryptedEmail, encryptedPassword, checkSum } = req.body;
+    const { encryptedEmail, encryptedPassword, checkSum, uuid } = req.body;
     // console.log(encryptedEmail, encryptedPassword);
     if (!encryptedEmail || !encryptedPassword) {
         res.json({
@@ -25,16 +25,20 @@ router.post('/passwordAuth', (req, res, next) => {
         });
         return;
     }
-    if (cryptoUtils.SM4Decrypt(encryptedEmail) === 'test@test.com' && cryptoUtils.SM4Decrypt(encryptedPassword) === "test") {
+    const TEMPKEY =  global.kb.padEnd(32, global.kb);
+    console.log('TEMPKEY','=======>', TEMPKEY);
+    if (cryptoUtils.SM4Decrypt(encryptedEmail, TEMPKEY) === 'test@test.com' && cryptoUtils.SM4Decrypt(encryptedPassword, TEMPKEY) === "test") {
+        // login success
+        global.uuidMap.set(uuid, TEMPKEY);
         const rString = cryptoUtils.getRandomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ=+/');
-        console.log(rString);
         res.json({
             code: 200,
             message: "user login success",
-            rString: cryptoUtils.SM4Encrypt(rString)
+            rString: cryptoUtils.SM4Encrypt(rString, global.uuidMap.get(uuid))
             // redirectUrl: `./auth.html?rString=${rString}`
         });
     } else {
+        // login failed
         res.json({
             code: 404,
             message: "邮箱地址或密码错误",
@@ -99,6 +103,7 @@ router.get('/dh', (req, res, next) => {
     const kb = power(req.query.x, b, P);
     console.log("kb ====> ", kb);
 
+    global.kb = kb.toString();
     res.json({ code: 200, y });
 })
 
