@@ -1,8 +1,9 @@
 //主文件
-const express = require('express');
-const cors = require('cors');
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 //导入user的路由
-const UserRouter = require('./router/users');
+import UserRouter from './router/users.js';
 
 // region
 // use map for uuid ===> secret
@@ -14,6 +15,11 @@ const app = express();
 app.use(cors());
 
 app.use(express.static('public'));
+
+app.use(cookieParser());
+
+// enable express to parse content type of application/json.
+app.use(express.json());
 
 // x-www-from-urlencoded格式解析
 // false表明用node的内置模块querystring来解析
@@ -28,6 +34,8 @@ app.use((req, res, next) => {
 
 app.use('/user', UserRouter);
 
-app.listen(port = 801, (req, res, next) => {
+const port = 801;
+
+app.listen(port, (req, res, next) => {
     console.log(`server is listening on ${port} port...`);
 })

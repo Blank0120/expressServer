@@ -1,6 +1,6 @@
 //user.js文件
-const express = require('express');
-const cryptoUtils = require('../utils/crypto');
+import express from 'express';
+import cryptoUtils from '../utils/crypto.js';
 
 const router = express.Router();
 
@@ -105,4 +105,11 @@ router.get('/dh', (req, res, next) => {
     res.json({ code: 200, y });
 })
 
-module.exports = router
+router.post('/decrypt', (req, res, next) => {
+    console.log("cookies = ", req.cookies);
+    const cipherBase64 = req.body.cipherBase;
+    console.log(cryptoUtils.rsaDecryptString(cipherBase64));
+    res.json({ code: 200, msg: "发送成功", error: "" });
+})
+
+export default router
