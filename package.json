@@ -7,7 +7,6 @@
     "dev": "node ./index.js"
   },
   "keywords": [],
-  "author": "",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",

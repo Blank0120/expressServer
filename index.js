@@ -28,6 +28,6 @@ app.use((req, res, next) => {
 
 app.use('/user', UserRouter);
 
-app.listen(80, (req, res, next) => {
-    console.log("server is listening on 80 port...");
+app.listen(port = 801, (req, res, next) => {
+    console.log(`server is listening on ${port} port...`);
 })
