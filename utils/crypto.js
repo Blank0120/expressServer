@@ -10,13 +10,13 @@ function getRsakeyPair(length) {
 function getSelfSignCert(keys) {
 	const pki = forge.pki;
 	// create an X.509v3 certificate
-	var cert = pki.createCertificate();
+	const cert = pki.createCertificate();
 	cert.publicKey = keys.publicKey;
 	cert.serialNumber = '01';
 	cert.validity.notBefore = new Date();
 	cert.validity.notAfter = new Date();
 	cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1);
-	var attrs = [{
+	const attrs = [{
 		name: 'commonName',
 		value: 'server.com'
 	}, {
@@ -41,23 +41,23 @@ function getSelfSignCert(keys) {
 function getSignature(plaintext, hash, privateKey) {
 	// sign data with a private key and output DigestInfo DER-encoded bytes
 	// (defaults to RSASSA PKCS#1 v1.5)
-	var md = forge.md[hash].create();
+	const md = forge.md[hash].create();
 	md.update(plaintext, 'utf8');
 	const sign = privateKey.sign(md);
 	return forge.util.bytesToHex(sign);
 }
 
 function getRandomString(length, chars) {
-	var result = '';
-	for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+	let result = '';
+	for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
 	return result;
 }
 
 function getSignedData(data, signer) {
-	var result = '';
+	let result = '';
 	try {
 		// create PKCS#7 signed data
-		var p7 = forge.pkcs7.createSignedData();
+		const p7 = forge.pkcs7.createSignedData();
 		p7.content = forge.util.createBuffer(data, 'utf8');
 
 		p7.addCertificate(signer.certificate);
