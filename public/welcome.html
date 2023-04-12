@@ -3,35 +3,77 @@
 
 <head>
 	<meta charset="utf-8">
-	<meta name="author" content="Kodinger">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<title>Welcome You</title>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/my-login.css">
+	<link rel="stylesheet" href="css/main.css">
 </head>
 
-<body class="">
-	<div id="div">
-
+<body>
+	<div class="container">
+		<div class="center">
+			<div class="textarea">
+				<table cellpadding="0" cellspacing="0" border="0" width="100%">
+					<tr valign="top" width="100%">
+						<td width="35%" class="sidebar">
+							<div class="sidebarheading">
+								<div id="username">
+									请先进行登录认证
+								</div>
+							</div>
+							<div class="sidebaritems">
+								<form name="frmInput">
+									<div style="padding-top:10px">
+										<textarea rows=16 style="width:100%;" class="sidebartextarea form-control"
+											name="txtPlaintext">在此输入发送的数据</textarea>
+										<div align="right">
+											<input type="button" value="发送" class="btn btn-primary" name="encrypt" style="margin-top: 10px;"
+												onclick="encryptClick()">
+										</div>
+									</div>
+								</form>
+								<form name="frmSender" method="post">
+									<input type="hidden" name="ciphertext">
+								</form>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
 	</div>
 
 	<script src="./lib/jquery-3.3.1.slim.min.js"></script>
 	<script src="./lib/bootstrap.min.js"></script>
 	<script src="./lib/js.cookie.min.js"></script>
 	<script src="js/my-login.js"></script>
+	<script src="js/BigInt.js"></script>
+	<script src="js/Barrett.js"></script>
+	<script src="js/stripped.js"></script>
 </body>
 
 <script>
 	const user = JSON.parse(Cookies.get("user") ?? null);
-	console.log(user);
-	$("#div")[0].innerHTML = user ? `欢迎您， ${user.user}` : "请先进行登录认证";
+	if (!user) {
+		alert("请先进行登录认证");
+		window.location.href = '/index.html';
+	} else {
+		$("#username")[0].innerHTML = `欢迎您， ${user.user}`;
+	}
 </script>
 
 <style>
-	body {
-		display: flex;
-		justify-content: center;
-		align-items: center;
+	.container {
+		position: relative;
+		height: 100%;
+	}
+
+	.center {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
 	}
 </style>
 
