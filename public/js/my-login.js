@@ -80,8 +80,7 @@ $(function () {
 			const [email, password] = form[0];
 			const encryptedEmail = await encrypt(email.value);
 			const encryptedPassword = await encrypt(password.value);
-			const uuid = getUUID();
-			const checkSum = await HMAC_SM3(JSON.stringify({ encryptedEmail, encryptedPassword, uuid }));
+			const checkSum = await HMAC_SM3(JSON.stringify({ encryptedEmail, encryptedPassword }));
 
 			$.ajax({
 				type: "post",
@@ -89,7 +88,6 @@ $(function () {
 				data: {
 					encryptedEmail,
 					encryptedPassword,
-					uuid,
 					checkSum,
 				},
 
@@ -102,8 +100,6 @@ $(function () {
 							return;
 						}
 						alert(user + " " + result.message);
-						Cookies.set("user", JSON.stringify({ user }));
-						Cookies.set("uuid", uuid);
 
 						console.log(result);
 
