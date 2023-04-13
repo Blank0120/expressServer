@@ -33,6 +33,7 @@ router.post('/passwordAuth', (req, res, next) => {
         const uuid = uuidv4();
         global.uuidMap.set(uuid, TEMPKEY);
         const rString = cryptoUtils.getRandomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ=+/');
+        console.log("rString ==>", rString);    // the format of hmac key is utf-8
         res.cookie('uuid', uuid, { signed: true });
         res.cookie('user', JSON.stringify({ user: 'test' }), { signed: true })
         res.json({
