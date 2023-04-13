@@ -104,15 +104,41 @@ $(function () {
 						alert(user + " " + result.message);
 						Cookies.set("user", JSON.stringify({ user }));
 						Cookies.set("uuid", uuid);
+
 						console.log(result);
-						window.location.href = `/auth.html?rString=${result.rString}`;
+
+						const r = decrypt(result.rString);
+
+						const hasher = CryptoApi.getHasher('sha256');
+						const digest = CryptoApi.hmac(KEY, r, hasher);
+
+						$.ajax({
+							type: "post",
+							url: "/user/auth",
+							data: {
+								randomString: result.rString,
+								hmac: 'HMAC-SM3',
+								digest: digest,
+							},
+							dataType: "json",
+							success: function (resJson) {
+								if (resJson.code !== 200) {
+									alert(resJson.message);
+									return;
+								}
+								window.location.href = '/welcome.html';
+							},
+							error: function (result) {
+								alert(result.responseText);
+							}
+						});
+
 					} else {
 						$('h4[name="msg"]').html(result.message);
 						alert(result.message);
 						sessionStorage.clear();
 						KEY = '';
 					}
-
 				},
 				error: function (result) {
 					alert("请求失败，请稍后重试");
