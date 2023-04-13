@@ -16,7 +16,7 @@ app.use(cors());
 
 app.use(express.static('public'));
 
-app.use(cookieParser());
+app.use(cookieParser('secret'));
 
 // enable express to parse content type of application/json.
 app.use(express.json());

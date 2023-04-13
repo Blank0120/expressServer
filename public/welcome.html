@@ -66,12 +66,12 @@
 </script>
 
 <script>
-	const user = JSON.parse(Cookies.get("user") ?? null);
+	const user = Cookies.get("user") ?? null;
 	if (!user) {
 		alert("请先进行登录认证");
 		window.location.href = '/index.html';
 	} else {
-		$("#username")[0].innerHTML = `欢迎您， ${user.user}`;
+		$("#username")[0].innerHTML = `欢迎您， test`;
 	}
 </script>
 
@@ -109,7 +109,7 @@
 		const ciphertext = encryptedString(key, plainText);
 		const cipherBase = window.btoa(ciphertext);
 
-		const data = { uuid: Cookies.get('uuid'), username: JSON.parse(Cookies.get("user")).user, cipherBase };
+		const data = { uuid: Cookies.get('uuid'), cipherBase };
 		const response = await fetch('/user/decrypt', {
 			method: 'POST',
 			headers: {

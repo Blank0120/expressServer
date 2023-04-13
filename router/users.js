@@ -22,7 +22,7 @@ router.post('/passwordAuth', (req, res, next) => {
     if (!encryptedEmail || !encryptedPassword) {
         res.json({
             code: 500,
-            message: "Please fill your email or password"
+            message: "请填写邮箱与密码"
         });
         return;
     }
@@ -33,8 +33,8 @@ router.post('/passwordAuth', (req, res, next) => {
         const uuid = uuidv4();
         global.uuidMap.set(uuid, TEMPKEY);
         const rString = cryptoUtils.getRandomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ=+/');
-        res.cookie('uuid', uuid);
-        res.cookie('user', JSON.stringify({ user: 'test' }))
+        res.cookie('uuid', uuid, { signed: true });
+        res.cookie('user', JSON.stringify({ user: 'test' }), { signed: true })
         res.json({
             code: 200,
             message: "user login success",
@@ -110,7 +110,7 @@ router.get('/dh', (req, res, next) => {
 })
 
 router.post('/decrypt', (req, res, next) => {
-    console.log("cookies = ", req.cookies);
+    console.log("cookies = ", req.signedCookies);
     const cipherBase64 = req.body.cipherBase;
     const data = cryptoUtils.rsaDecryptString(cipherBase64);
     console.log(data);
