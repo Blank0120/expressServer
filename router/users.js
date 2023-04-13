@@ -1,6 +1,7 @@
 //user.js文件
 import express from 'express';
 import cryptoUtils from '../utils/crypto.js';
+import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();
 
@@ -16,7 +17,7 @@ router.post('/login', (req, res, next) => {
 })
 
 router.post('/passwordAuth', (req, res, next) => {
-    const { encryptedEmail, encryptedPassword, checkSum, uuid } = req.body;
+    const { encryptedEmail, encryptedPassword, checkSum } = req.body;
     // console.log(encryptedEmail, encryptedPassword);
     if (!encryptedEmail || !encryptedPassword) {
         res.json({
@@ -29,8 +30,10 @@ router.post('/passwordAuth', (req, res, next) => {
     console.log('TEMPKEY', '=======>', TEMPKEY);
     if (cryptoUtils.SM4Decrypt(encryptedEmail, TEMPKEY) === 'test@test.com' && cryptoUtils.SM4Decrypt(encryptedPassword, TEMPKEY) === "test") {
         // login success
+        const uuid = uuidv4();
         global.uuidMap.set(uuid, TEMPKEY);
         const rString = cryptoUtils.getRandomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ=+/');
+        res.cookie('uuid', uuid);
         res.json({
             code: 200,
             message: "user login success",
