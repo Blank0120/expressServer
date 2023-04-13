@@ -108,7 +108,8 @@ router.get('/dh', (req, res, next) => {
 router.post('/decrypt', (req, res, next) => {
     console.log("cookies = ", req.cookies);
     const cipherBase64 = req.body.cipherBase;
-    console.log(cryptoUtils.rsaDecryptString(cipherBase64));
+    const data = cryptoUtils.rsaDecryptString(cipherBase64);
+    console.log(data);
     res.json({ code: 200, msg: "发送成功", error: "" });
 })
 
