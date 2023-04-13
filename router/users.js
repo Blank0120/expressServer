@@ -113,4 +113,15 @@ router.post('/decrypt', (req, res, next) => {
     res.json({ code: 200, msg: "发送成功", error: "" });
 })
 
+router.post('/loginOut', (req, res, next) => {
+    const uuid = req.body.uuid;
+    console.log('loginOut => uuid =', uuid);
+    if (global.uuidMap.has(uuid)) {
+        global.uuidMap.delete(uuid);
+        res.json({code:200,msg: 'loginOut success'});
+    } else {
+        res.json({ code: 404, error: '不存在此uuid' });
+    }
+})
+
 export default router
