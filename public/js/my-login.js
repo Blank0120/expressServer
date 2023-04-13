@@ -101,8 +101,6 @@ $(function () {
 						}
 						alert(user + " " + result.message);
 
-						console.log(result);
-
 						const r = decrypt(result.rString);
 
 						const hasher = CryptoApi.getHasher('sha256');

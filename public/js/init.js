@@ -10,10 +10,10 @@ $(() => {
 
 			dataType: "json",
 			success: function (result) {
-				console.log(result);
+				// console.log(result);
 			},
 			error: function (error) {
-				console.error(error.responseText);
+				// console.error(error.responseText);
 			}
 		});
 

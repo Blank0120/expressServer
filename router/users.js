@@ -27,7 +27,7 @@ router.post('/passwordAuth', (req, res, next) => {
         return;
     }
     const TEMPKEY = global.kb.padEnd(32, global.kb);
-    console.log('TEMPKEY', '=======>', TEMPKEY);
+    console.log('TEMPKEY', '==>', TEMPKEY);
     if (cryptoUtils.SM4Decrypt(encryptedEmail, TEMPKEY) === 'test@test.com' && cryptoUtils.SM4Decrypt(encryptedPassword, TEMPKEY) === "test") {
         // login success
         const uuid = uuidv4();
@@ -101,16 +101,16 @@ router.get('/dh', (req, res, next) => {
 
     const y = power(G, b, P);
 
-    console.log("x ====> ", req.query.x);
+    console.log("x ===> ", req.query.x);
     const kb = power(req.query.x, b, P);
-    console.log("kb ====> ", kb);
+    console.log("kb ==> ", kb);
 
     global.kb = kb.toString();
     res.json({ code: 200, y });
 })
 
 router.post('/decrypt', (req, res, next) => {
-    console.log("cookies = ", req.signedCookies);
+    console.log("cookies =", req.signedCookies);
     const cipherBase64 = req.body.cipherBase;
     const data = cryptoUtils.rsaDecryptString(cipherBase64);
     console.log(data);
