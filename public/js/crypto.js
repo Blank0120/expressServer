@@ -22,6 +22,6 @@ function getUUID() {
 }
 
 function generateKey() {
-	KEY = seed.toString().padEnd(32, seed);
+	KEY = CryptoJS.MD5(seed.toString()).toString();
 	sessionStorage.setItem("key", KEY);
 }

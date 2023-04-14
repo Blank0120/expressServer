@@ -2,6 +2,7 @@
 import express from 'express';
 import cryptoUtils from '../utils/crypto.js';
 import { v4 as uuidv4 } from 'uuid';
+import crypto from "crypto";
 
 const router = express.Router();
 
@@ -26,7 +27,8 @@ router.post('/passwordAuth', (req, res, next) => {
         });
         return;
     }
-    const TEMPKEY = global.kb.padEnd(32, global.kb);
+    
+    const TEMPKEY = crypto.createHash('md5').update(global.kb).digest('hex');
     console.log('TEMPKEY', '==>', TEMPKEY);
     if (cryptoUtils.SM4Decrypt(encryptedEmail, TEMPKEY) === 'test@test.com' && cryptoUtils.SM4Decrypt(encryptedPassword, TEMPKEY) === "test") {
         // login success
@@ -119,7 +121,7 @@ router.post('/decrypt', (req, res, next) => {
 })
 
 router.post('/loginOut', (req, res, next) => {
-    const uuid = req.body.uuid;
+    const uuid = req.signedCookies.uuid;
     console.log('loginOut => uuid =', uuid);
     if (global.uuidMap.has(uuid)) {
         global.uuidMap.delete(uuid);
