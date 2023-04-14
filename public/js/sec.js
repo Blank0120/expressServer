@@ -8,7 +8,7 @@ async function getSecret() {
 
 		const x = bob.getPublicKey().toString('base64');
 
-		const yRes = await (await fetch(`/user/dh?x=${encodeURIComponent(x)}`)).json();
+		const yRes = await (await fetch(`/user/dh/${encodeURIComponent(x)}`)).json();
 
 		if (yRes.code !== 200) {
 			alert("与服务器断开连接");

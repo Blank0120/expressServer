@@ -113,11 +113,11 @@ router.get('/getRandomStr', (req, res, next) => {
 //     res.json({ code: 200, y });
 // })
 
-router.get('/dh', (req, res, next) => {
+router.get('/dh/:x', (req, res, next) => {
     const alice = crypto.getDiffieHellman('modp1');
     alice.generateKeys();
 
-    const aliceSecret = alice.computeSecret(req.query.x, 'base64', 'hex');
+    const aliceSecret = alice.computeSecret(req.params.x, 'base64', 'hex');
 
     const y = btoa(JSON.stringify(alice.getPublicKey()));
 
