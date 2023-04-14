@@ -21,7 +21,7 @@ function getUUID() {
 	return uuid.substr(uuid.lastIndexOf("/") + 1);
 }
 
-function getKey() {
+function generateKey() {
 	KEY = seed.toString().padEnd(32, seed);
 	sessionStorage.setItem("key", KEY);
 }

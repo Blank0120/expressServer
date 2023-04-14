@@ -1,6 +1,6 @@
 async function getSecret() {
-	console.log("start...");
-	console.log("this is our key for you, please use it carefully, this is absolutely Safety :)");
+	console.log("start... :)");
+	console.log("");
 
 	async function dh() {
 		const power = (a, b, p) => {
@@ -39,5 +39,5 @@ async function getSecret() {
 	} catch (error) {
 		console.error(error);
 	}
-	getKey();
+	generateKey();
 };
