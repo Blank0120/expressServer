@@ -3,6 +3,8 @@ import express from 'express';
 import cryptoUtils from '../utils/crypto.js';
 import { v4 as uuidv4 } from 'uuid';
 import crypto from "crypto";
+import atob from "atob";
+import btoa from "btoa";
 
 const router = express.Router();
 
@@ -27,7 +29,7 @@ router.post('/passwordAuth', (req, res, next) => {
         });
         return;
     }
-    
+
     const TEMPKEY = crypto.createHash('md5').update(global.kb).digest('hex');
     console.log('TEMPKEY', '==>', TEMPKEY);
     if (cryptoUtils.SM4Decrypt(encryptedEmail, TEMPKEY) === 'test@test.com' && cryptoUtils.SM4Decrypt(encryptedPassword, TEMPKEY) === "test") {
@@ -88,27 +90,40 @@ router.get('/getRandomStr', (req, res, next) => {
     res.json({ code: 200, signedData, randomString: rString });
 })
 
+// router.get('/dh', (req, res, next) => {
+//     const power = (a, b, p) => {
+//         if (b == 1)
+//             return a;
+//         else
+//             return ((Math.pow(a, b)) % p);
+//     }
+//     const getRandom = (min, max) => {
+//         return Math.floor(Math.random() * max) + min;
+//     }
+//     const P = 98764321261;
+//     const G = 7;
+//     const b = getRandom(3, 10);
+
+//     const y = power(G, b, P);
+
+//     console.log("x ===> ", req.query.x);
+//     const kb = power(req.query.x, b, P);
+//     console.log("kb ==> ", kb);
+
+//     global.kb = kb.toString();
+//     res.json({ code: 200, y });
+// })
+
 router.get('/dh', (req, res, next) => {
-    const power = (a, b, p) => {
-        if (b == 1)
-            return a;
-        else
-            return ((Math.pow(a, b)) % p);
-    }
-    const getRandom = (min, max) => {
-        return Math.floor(Math.random() * max) + min;
-    }
-    const P = 98764321261;
-    const G = 7;
-    const b = getRandom(3, 10);
+    const alice = crypto.getDiffieHellman('modp1');
+    alice.generateKeys();
 
-    const y = power(G, b, P);
+    const json = JSON.parse(atob(req.query.x));
+    const aliceSecret = alice.computeSecret(Buffer.from(json.data), null, 'hex');
 
-    console.log("x ===> ", req.query.x);
-    const kb = power(req.query.x, b, P);
-    console.log("kb ==> ", kb);
+    const y = btoa(JSON.stringify(alice.getPublicKey()));
 
-    global.kb = kb.toString();
+    global.kb = aliceSecret.toString();
     res.json({ code: 200, y });
 })
 

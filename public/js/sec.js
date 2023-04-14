@@ -3,23 +3,10 @@ async function getSecret() {
 	console.log("");
 
 	async function dh() {
-		const power = (a, b, p) => {
-			if (b == 1)
-				return a;
-			else
-				return ((Math.pow(a, b)) % p);
-		}
-		const getRandom = (min, max) => {
-			return Math.floor(Math.random() * max) + min;
-		}
+		const bob = getDiffieHellman('modp1');
+		bob.generateKeys();
 
-		const P = 98764321261;
-
-		const G = 7;
-
-		const a = getRandom(3, 10);
-
-		const x = power(G, a, P);
+		const x = btoa(JSON.stringify(bob.getPublicKey()));
 
 		const yRes = await (await fetch(`/user/dh?x=${x}`)).json();
 
@@ -27,10 +14,10 @@ async function getSecret() {
 			alert("与服务器断开连接");
 			return
 		}
+		const json = JSON.parse(atob(yRes.y));
+		const bobSecret = bob.computeSecret(new Uint8Array(json.data), null, 'hex');
 
-		const ka = power(yRes.y, a, P);
-
-		return ka;
+		return bobSecret.toString('hex');
 	}
 
 	try {
