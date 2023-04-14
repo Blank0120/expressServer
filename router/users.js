@@ -122,7 +122,7 @@ router.get('/dh', (req, res, next) => {
 
     const y = btoa(JSON.stringify(alice.getPublicKey()));
 
-    global.kb = aliceSecret.toString();
+    global.kb = aliceSecret;
     res.json({ code: 200, y });
 })
 

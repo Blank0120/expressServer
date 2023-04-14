@@ -15,9 +15,9 @@ async function getSecret() {
 			return
 		}
 		const json = JSON.parse(atob(yRes.y));
-		const bobSecret = bob.computeSecret(new Uint8Array(json.data), null, 'hex');
+		const bobSecret = bob.computeSecret(new Uint8Array(json.data)).toString('hex');
 
-		return bobSecret.toString('hex');
+		return bobSecret;
 	}
 
 	try {

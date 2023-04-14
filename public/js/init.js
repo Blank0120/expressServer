@@ -9,7 +9,7 @@ $(() => {
 			},
 			dataType: "json",
 			success: function (result) {
-				console.log(result);
+				// console.log(result);
 				KEY = '';
 				sessionStorage.clear();
 
