@@ -15,7 +15,6 @@ router.get('/login', (req, res, next) => {
 })
 
 router.post('/login', (req, res, next) => {
-    console.log(req.body);
     res.json({ code: 200, message: "user login success" });
 })
 
@@ -55,7 +54,7 @@ router.post('/passwordAuth', (req, res, next) => {
 })
 
 router.post('/auth', (req, res, next) => {
-    console.log(req.body);
+    // console.log(req.body);
     res.json({
         code: 200,
         message: "auth success"
@@ -127,10 +126,10 @@ router.get('/dh', (req, res, next) => {
 })
 
 router.post('/decrypt', (req, res, next) => {
-    console.log("cookies =", req.signedCookies);
+    // console.log("cookies =", req.signedCookies);
     const cipherBase64 = req.body.cipherBase;
     const data = cryptoUtils.rsaDecryptString(cipherBase64);
-    console.log(data);
+    console.log("RSAdecrypt =>", data);
     res.json({ code: 200, msg: "发送成功", error: "" });
 })
 
