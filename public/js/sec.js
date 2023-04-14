@@ -6,9 +6,9 @@ async function getSecret() {
 		const bob = getDiffieHellman('modp1');
 		bob.generateKeys();
 
-		const x = btoa(JSON.stringify(bob.getPublicKey()));
+		const x = bob.getPublicKey().toString('base64');
 
-		const yRes = await (await fetch(`/user/dh?x=${x}`)).json();
+		const yRes = await (await fetch(`/user/dh?x=${encodeURIComponent(x)}`)).json();
 
 		if (yRes.code !== 200) {
 			alert("与服务器断开连接");

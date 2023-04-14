@@ -118,8 +118,7 @@ router.get('/dh', (req, res, next) => {
     const alice = crypto.getDiffieHellman('modp1');
     alice.generateKeys();
 
-    const json = JSON.parse(atob(req.query.x));
-    const aliceSecret = alice.computeSecret(Buffer.from(json.data), null, 'hex');
+    const aliceSecret = alice.computeSecret(req.query.x, 'base64', 'hex');
 
     const y = btoa(JSON.stringify(alice.getPublicKey()));
 
@@ -137,7 +136,6 @@ router.post('/decrypt', (req, res, next) => {
 
 router.post('/loginOut', (req, res, next) => {
     const uuid = req.signedCookies.uuid;
-    console.log('loginOut => uuid =', uuid);
     if (global.uuidMap.has(uuid)) {
         global.uuidMap.delete(uuid);
         res.json({ code: 200, msg: 'loginOut success' });
