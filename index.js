@@ -2,6 +2,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import session from "express-session";
 //导入user的路由
 import UserRouter from './router/users.js';
 
@@ -14,9 +15,13 @@ global.uuidMap = new Map();
 const app = express();
 app.use(cors());
 
-app.use(express.static('public'));
-
 app.use(cookieParser('secret'));
+
+app.use(session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: false,
+}));
 
 // enable express to parse content type of application/json.
 app.use(express.json());
@@ -27,8 +32,10 @@ app.use(express.json());
 // urlencoded格式解析，解析后的结果放在了res.body属性中
 app.use(express.urlencoded({ extended: true }));
 
+app.use(express.static('public'));
 app.use((req, res, next) => {
     console.log(global.uuidMap);
+    console.log(req.session);
     next();
 })
 
