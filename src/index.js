@@ -6,12 +6,6 @@ import session from "express-session";
 //导入user的路由
 import UserRouter from './router/users.js';
 
-// region
-// use map for uuid ===> secret
-global.uuidMap = new Map();
-
-// endregion
-
 const app = express();
 app.use(cors());
 
@@ -34,7 +28,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static('./public'));
 app.use((req, res, next) => {
-    console.log(global.uuidMap);
     console.log(req.session);
     next();
 })

@@ -40,23 +40,25 @@ router.post('/login', (req, res, next) => {
         // login success
         // @ts-ignore
         req.session.isLogin = true;
+        // @ts-ignore
+        req.session.secretKey = TEMPKEY;
+        // @ts-ignore
+        const { secretKey } = req.session;
 
         const uuid = uuidv4();
-        global.uuidMap.set(uuid, TEMPKEY);
         const rString = cryptoUtils.getRandomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ=+/');
         console.log("rString ==>", rString);    // the format of hmac key is utf-8
         const rsaKeys = cryptoUtils.getRsakeyPair(1024);
         const selfSignCert = cryptoUtils.getSelfSignCert(rsaKeys);
-    
+
         const signer = { certificate: selfSignCert, keys: { privateKey: rsaKeys.privateKey } };
         const signedData = cryptoUtils.getSignedData(rString, signer);
 
-        res.cookie('uuid', uuid, { signed: true });
-        res.cookie('user', JSON.stringify({ user: 'test' }), { signed: true })
+        res.cookie('isLogin', true, { signed: true });
         res.json({
             code: 200,
             message: "user login success",
-            rString: cryptoUtils.SM4Encrypt(rString, global.uuidMap.get(uuid)),
+            rString: cryptoUtils.SM4Encrypt(rString, secretKey),
             signedData
         });
     } else {
@@ -100,7 +102,10 @@ router.get('/dh/:x', (req, res, next) => {
 router.post('/decrypt', isLogin, (req, res, next) => {
     // console.log("cookies =", req.signedCookies);
     const cipherBase64 = req.body.cipherBase;
-    const data = cryptoUtils.rsaDecryptString(cipherBase64);
+    // @ts-ignore
+    const { secretKey } = req.session;
+    const data = cryptoUtils.SM4Decrypt(atob(cipherBase64), secretKey);
+    // const data = cryptoUtils.rsaDecryptString(cipherBase64);
     console.log("RSAdecrypt =>", data);
     res.json({ code: 200, msg: "发送成功", error: "" });
 })
@@ -108,14 +113,10 @@ router.post('/decrypt', isLogin, (req, res, next) => {
 router.post('/loginOut', (req, res, next) => {
     // @ts-ignore
     delete req.session.isLogin;
+    // @ts-ignore
+    delete req.session.secretKey;
 
-    const uuid = req.signedCookies.uuid;
-    if (global.uuidMap.has(uuid)) {
-        global.uuidMap.delete(uuid);
-        res.json({ code: 200, msg: 'loginOut success' });
-    } else {
-        res.json({ code: 404, error: '不存在此uuid' });
-    }
+    res.json({ code: 200, msg: 'loginOut success' });
 })
 
 export default router
