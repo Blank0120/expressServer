@@ -52,9 +52,9 @@
 	<script src="../lib/jquery.min.js"></script>
 	<script src="../lib/bootstrap.min.js"></script>
 	<script src="../lib/js.cookie.min.js"></script>
-	<script src="../js/my-login.js"></script>
-	<script src="../js/ukey.js"></script>
 	<script src="../lib/sm4.js"></script>
+	<script src="../js/my-login.js" type="module"></script>
+	<script src="../js/ukey.js"></script>
 	<script src="../js/crypto.js"></script>
 </body>
 
@@ -126,6 +126,7 @@
 
 			if (json.code === 200) {
 				KEY = '';
+				seed = '';
 				sessionStorage.clear();
 
 				const cookies = document.cookie.split(";");

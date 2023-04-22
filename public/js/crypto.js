@@ -14,12 +14,6 @@ function HMAC_SM3(data) {
 	}
 	return CryptoJS.SHA256(data).toString();
 }
-function getUUID() {
-	const temp_url = URL.createObjectURL(new Blob());
-	const uuid = temp_url.toString();
-	URL.revokeObjectURL(temp_url);
-	return uuid.substr(uuid.lastIndexOf("/") + 1);
-}
 
 function generateKey() {
 	KEY = CryptoJS.MD5(seed.toString()).toString();
