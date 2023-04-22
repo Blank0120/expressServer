@@ -107,10 +107,9 @@ router.post('/decrypt', isLogin, (req, res, next) => {
 })
 
 router.get('/loginOut', (req, res, next) => {
-    // @ts-ignore
-    delete req.session.isLogin;
-    // @ts-ignore
-    delete req.session.secretKey;
+    req.session.destroy((e) => {
+        console.log(e);
+    });
 
     res.json({ code: 200, msg: 'loginOut success' });
 })
