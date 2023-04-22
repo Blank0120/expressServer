@@ -32,7 +32,7 @@ app.use(express.json());
 // urlencoded格式解析，解析后的结果放在了res.body属性中
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static('public'));
+app.use(express.static('./public'));
 app.use((req, res, next) => {
     console.log(global.uuidMap);
     console.log(req.session);

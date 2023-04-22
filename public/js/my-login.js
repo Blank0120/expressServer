@@ -84,7 +84,7 @@ $(function () {
 
 			$.ajax({
 				type: "post",
-				url: "/user/passwordAuth",
+				url: "/user/login",
 				data: {
 					encryptedEmail,
 					encryptedPassword,

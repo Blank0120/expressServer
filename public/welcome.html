@@ -30,7 +30,9 @@
 									<div style="padding-top:10px">
 										<textarea rows=16 style="width:100%;" class="sidebartextarea form-control"
 											name="txtPlaintext" placeholder="在此输入发送的数据" maxlength="50"></textarea>
-										<div align="right">
+										<div class="footer">
+											<input type="button" value="退出" class="btn btn-primary" name="loginOut"
+												style="margin-top: 10px;" onclick="loginOutClick()">
 											<input type="button" value="发送" class="btn btn-primary" name="encrypt"
 												style="margin-top: 10px;" onclick="encryptClick()">
 										</div>
@@ -86,6 +88,11 @@
 		left: 50%;
 		transform: translate(-50%, -50%);
 	}
+
+	.footer {
+		display: flex;
+		justify-content: space-between;
+	}
 </style>
 
 <script>
@@ -122,6 +129,42 @@
 
 			if (json.code === 200) {
 				alert(json.msg);
+			} else {
+				alert(json.error);
+			}
+		} else {
+			alert("发送失败");
+		}
+	}
+
+	async function loginOutClick() {
+		const uuid = Cookies.get("uuid");
+		const response = await fetch('/user/loginOut', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json;charset=utf-8'
+			},
+			data: {
+				uuid
+			}
+		});
+
+		if (response.ok) {
+			const json = await response.json();
+
+			if (json.code === 200) {
+				KEY = '';
+				sessionStorage.clear();
+
+				const cookies = document.cookie.split(";");
+
+				for (let i = 0; i < cookies.length; i++) {
+					const cookie = cookies[i];
+					const eqPos = cookie.indexOf("=");
+					const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+					document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+				}
+				window.location.href = '/';
 			} else {
 				alert(json.error);
 			}
