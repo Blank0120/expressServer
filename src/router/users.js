@@ -98,13 +98,11 @@ router.get('/dh/:x', (req, res, next) => {
 })
 
 router.post('/decrypt', isLogin, (req, res, next) => {
-    // console.log("cookies =", req.signedCookies);
     const cipherBase64 = req.body.cipherBase;
     // @ts-ignore
     const { secretKey } = req.session;
     const data = cryptoUtils.SM4Decrypt(atob(cipherBase64), secretKey);
-    // const data = cryptoUtils.rsaDecryptString(cipherBase64);
-    console.log("RSAdecrypt =>", data);
+    console.log("SM4decrypt =>", data);
     res.json({ code: 200, msg: "发送成功", error: "" });
 })
 
