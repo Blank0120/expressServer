@@ -105,7 +105,7 @@ router.post('/decrypt', isLogin, (req, res, next) => {
     res.json({ code: 200, msg: "发送成功", error: "" });
 })
 
-router.post('/loginOut' ,(req, res, next) => {
+router.post('/loginOut', (req, res, next) => {
     // @ts-ignore
     delete req.session.isLogin;
 
