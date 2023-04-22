@@ -1,7 +1,6 @@
 //user.js文件
 import express from 'express';
 import cryptoUtils from '../utils/crypto.js';
-import { v4 as uuidv4 } from 'uuid';
 import crypto from "crypto";
 import atob from "atob";
 import btoa from "btoa";
@@ -24,9 +23,9 @@ router.post('/login', (req, res, next) => {
     // @ts-ignore
     delete req.session.isLogin;
 
-    const { encryptedEmail, encryptedPassword, checkSum } = req.body;
-    // console.log(encryptedEmail, encryptedPassword);
-    if (!encryptedEmail || !encryptedPassword) {
+    const { email, encryptedPassword, checkSum } = req.body;
+    // console.log(email, encryptedPassword);
+    if (!email || !encryptedPassword) {
         res.json({
             code: 404,
             message: "请填写邮箱与密码"
@@ -36,7 +35,7 @@ router.post('/login', (req, res, next) => {
 
     const TEMPKEY = crypto.createHash('md5').update(global.kb).digest('hex');
     console.log('TEMPKEY', '==>', TEMPKEY);
-    if (userDao.verifyLogin(encryptedEmail, encryptedPassword, TEMPKEY)) {
+    if (userDao.verifyLogin(email, encryptedPassword, TEMPKEY)) {
         // login success
         // @ts-ignore
         req.session.isLogin = true;
@@ -45,8 +44,7 @@ router.post('/login', (req, res, next) => {
         // @ts-ignore
         const { secretKey } = req.session;
 
-        const uuid = uuidv4();
-        const rString = cryptoUtils.getRandomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ=+/');
+        const rString = cryptoUtils.getRandomString();
         console.log("rString ==>", rString);    // the format of hmac key is utf-8
         const rsaKeys = cryptoUtils.getRsakeyPair(1024);
         const selfSignCert = cryptoUtils.getSelfSignCert(rsaKeys);
@@ -54,7 +52,7 @@ router.post('/login', (req, res, next) => {
         const signer = { certificate: selfSignCert, keys: { privateKey: rsaKeys.privateKey } };
         const signedData = cryptoUtils.getSignedData(rString, signer);
 
-        res.cookie('isLogin', true, { signed: true });
+        res.cookie('signedUsername', email.replace(/@.+\.com/g,''), { signed: true });
         res.json({
             code: 200,
             message: "user login success",
@@ -79,7 +77,7 @@ router.post('/auth', isLogin, (req, res, next) => {
 })
 
 router.get('/getRandomString', isLogin, (req, res, next) => {
-    const rString = cryptoUtils.getRandomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ=+/');
+    const rString = cryptoUtils.getRandomString();
     const rsaKeys = cryptoUtils.getRsakeyPair(1024);
     const selfSignCert = cryptoUtils.getSelfSignCert(rsaKeys);
     const signature = cryptoUtils.getSignature(rString, 'sha1', rsaKeys.privateKey);
@@ -110,7 +108,7 @@ router.post('/decrypt', isLogin, (req, res, next) => {
     res.json({ code: 200, msg: "发送成功", error: "" });
 })
 
-router.post('/loginOut', (req, res, next) => {
+router.get('/loginOut', (req, res, next) => {
     // @ts-ignore
     delete req.session.isLogin;
     // @ts-ignore

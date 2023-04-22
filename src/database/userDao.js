@@ -10,10 +10,7 @@ const userMap = new Map([
 
 const userDao = {};
 
-
-
-userDao.verifyLogin = (encryptedEmail, encryptedPassword, TEMPKEY) => {
-	const email = cryptoUtils.SM4Decrypt(encryptedEmail, TEMPKEY);
+userDao.verifyLogin = (email, encryptedPassword, TEMPKEY) => {
 	const password = cryptoUtils.SM4Decrypt(encryptedPassword, TEMPKEY);
 
 	return userMap.has(email) && userMap.get(email) === password;

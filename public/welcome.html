@@ -13,7 +13,7 @@
 	<link rel="stylesheet" href="css/main.css">
 </head>
 
-<body onload="load()">
+<body>
 	<div class="container">
 		<div class="center">
 			<div class="textarea">
@@ -67,12 +67,12 @@
 </script>
 
 <script type="module">
-	const user = Cookies.get("isLogin") ?? null;
-	if (!user) {
+	const signedUsername = Cookies.get("signedUsername") ?? null;
+	if (!signedUsername) {
 		alert("请先进行登录认证");
 		window.location.href = '/index.html';
 	} else {
-		$("#username")[0].innerHTML = `欢迎您， test`;
+		$("#username")[0].innerHTML = `欢迎您， ${signedUsername.slice(2).replace(/\..+$/,'')}`;
 	}
 </script>
 
@@ -96,16 +96,6 @@
 </style>
 
 <script>
-	let key = "";
-	function load() {
-		setMaxDigits(262);
-		key = new KeyPair(
-			"10001",
-			"",
-			"C5FA3DC3DE71C5E58FBA5BB5063241D165C20205B02584E7BBF91B81D21263CC235D2725105B8C40FC1ADD30C2BC93AD766990AC1D1F76866AB1D7CD01B51F2B4F8D0AB30B8E12ED72A756D8D043F82F011723F8C35D8D7C8F71F92A68AF15690A28E03A1A27A7D2F968A3DEBC78DA1138CEFCA9D4CC2C8002A4A4B7B3CB96CF73F6754FA359FE1ACB11AFA052F597E6D5AEDFAEB13853EBFA493A125EF176CF1960CDF8502BB9E41E7973BE3DC2C5493F9F94E1D8AAF55030CCA5824F7C3A581C51CA816347A5EA442CE319BF990072A499CDDBCE86326CA4806A2FC79F765E3045ED977C4924EA23DFB9D90FC3672F4BBCD6E509EC50ED7E74D65B575F6F2F",
-		);
-	}
-
 	async function encryptClick() {
 		const plainText = document.frmInput.txtPlaintext.value;
 		if (!plainText) {
@@ -137,16 +127,7 @@
 	}
 
 	async function loginOutClick() {
-		const uuid = Cookies.get("uuid");
-		const response = await fetch('/user/loginOut', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json;charset=utf-8'
-			},
-			data: {
-				uuid
-			}
-		});
+		const response = await fetch('/user/loginOut');
 
 		if (response.ok) {
 			const json = await response.json();

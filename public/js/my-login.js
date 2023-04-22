@@ -78,15 +78,15 @@ $(function () {
 			await getSecret();
 
 			const [email, password] = form[0];
-			const encryptedEmail = await encrypt(email.value);
+			const emailStr = email.value;
 			const encryptedPassword = await encrypt(password.value);
-			const checkSum = await HMAC_SM3(JSON.stringify({ encryptedEmail, encryptedPassword }));
+			const checkSum = await HMAC_SM3(JSON.stringify({ emailStr, encryptedPassword }));
 
 			$.ajax({
 				type: "post",
 				url: "/user/login",
 				data: {
-					encryptedEmail,
+					email:emailStr,
 					encryptedPassword,
 					checkSum,
 				},
