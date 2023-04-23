@@ -77,15 +77,46 @@
 	<script src="./lib/js.cookie.min.js"></script>
 	<script src="./lib/dh.min.js"></script>
 	<script src="./lib/sm4.js"></script>
-	<script src="./js/ukey.js"></script>
-	<script src="./js/crypto.js"></script>
-	<script src="./js/sec.js"></script>
+
+	<script src="./js/ukey.js" type="module"></script>
+	<script src="./js/crypto.js" type="module"></script>
 	<script src="./js/my-login.js" type="module"></script>
 </body>
 
 </html>
 
-<script>
+<script type="module">
+	async function getSecret() {
+		console.log("start... :)");
+		console.log("");
+
+		async function dh() {
+			const bob = getDiffieHellman('modp1');
+			bob.generateKeys();
+
+			const x = bob.getPublicKey().toString('base64');
+
+			const yRes = await (await fetch(`/user/dh/${encodeURIComponent(x)}`)).json();
+
+			if (yRes.code !== 200) {
+				alert("与服务器断开连接");
+				return
+			}
+			const json = JSON.parse(atob(yRes.y));
+			const bobSecret = bob.computeSecret(new Uint8Array(json.data)).toString('hex');
+
+			return bobSecret;
+		}
+
+		try {
+			seed = await dh();
+			console.log(seed);
+			KEY = CryptoJS.MD5(seed.toString()).toString();
+			sessionStorage.setItem("key", KEY);
+		} catch (error) {
+			console.error(error);
+		}
+	};
 	$(function () {
 		$("#login_form").submit(async function (event) {
 			const form = $(this);
@@ -102,7 +133,7 @@
 				const [email, password] = form[0];
 				const emailStr = email.value;
 				const encryptedPassword = await encrypt(password.value);
-				const checkSum = await HMAC_SM3(JSON.stringify({ emailStr, encryptedPassword }));
+				const checkSum = await SHA256(JSON.stringify({ emailStr, encryptedPassword }));
 
 				$.ajax({
 					type: "post",
@@ -154,6 +185,7 @@
 							alert(result.message);
 							sessionStorage.clear();
 							KEY = '';
+							seed = '';
 						}
 					},
 					error: function (result) {

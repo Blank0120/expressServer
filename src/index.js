@@ -2,9 +2,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import session from "express-session";
-import RedisStore from "connect-redis";
-import { createClient } from "redis";
+import session, { MemoryStore } from "express-session";
 //导入user的路由
 import UserRouter from './router/users.js';
 
@@ -13,18 +11,8 @@ app.use(cors());
 
 app.use(cookieParser('secret'));
 
-// Initialize client.
-let redisClient = createClient();
-redisClient.connect().catch(console.error);
-
-// Initialize store.
-let redisStore = new RedisStore({
-    client: redisClient,
-    prefix: "express-session:",
-})
-
 app.use(session({
-    store: redisStore,
+    store: new MemoryStore(),
     resave: false, // required: force lightweight session keep alive (touch)
     saveUninitialized: false, // recommended: only save session when data exists
     secret: "secret",
@@ -41,7 +29,11 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static('./public'));
 app.use((req, res, next) => {
-    console.log(req.session);
+    console.log(req.sessionID);
+    // @ts-ignore
+    req.sessionStore.all((e, sessions) => {
+        console.log(sessions);
+    })
     next();
 })
 

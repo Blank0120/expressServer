@@ -53,9 +53,10 @@
 	<script src="../lib/bootstrap.min.js"></script>
 	<script src="../lib/js.cookie.min.js"></script>
 	<script src="../lib/sm4.js"></script>
+
 	<script src="../js/my-login.js" type="module"></script>
-	<script src="../js/ukey.js"></script>
-	<script src="../js/crypto.js"></script>
+	<script src="../js/ukey.js" type="module"></script>
+	<script src="../js/crypto.js" type="module"></script>
 </body>
 
 <script type="module">
@@ -87,8 +88,8 @@
 	}
 </style>
 
-<script>
-	async function encryptClick() {
+<script type="module">
+	window.encryptClick = async function () {
 		const plainText = document.frmInput.txtPlaintext.value;
 		if (!plainText) {
 			alert('请输入内容');
@@ -118,7 +119,7 @@
 		}
 	}
 
-	async function loginOutClick() {
+	window.loginOutClick = async function() {
 		const response = await fetch('/user/loginOut');
 
 		if (response.ok) {
@@ -140,6 +141,7 @@
 				window.location.href = '/';
 			} else {
 				alert(json.error);
+				window.location.href = '/';
 			}
 		} else {
 			alert("发送失败");
