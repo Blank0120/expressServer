@@ -42,6 +42,18 @@
 									<input type="hidden" name="ciphertext">
 								</form>
 							</div>
+							<div class="sidebaritems">
+								<form name="fileInput" method="post" action="/file/upload"  enctype="multipart/form-data">
+									<div style="padding-top:10px">
+										<input type="file" rows=16 style="width:100%;" class="sidebartextarea form-control form-control-file"
+											name="plainFile"></input>
+										<div align="right">
+											<input type="submit" value="上传" class="btn btn-primary" name="upLoad"
+												style="margin-top: 10px;">
+										</div>
+									</div>
+								</form>
+							</div>
 						</td>
 					</tr>
 				</table>
@@ -54,9 +66,8 @@
 	<script src="../lib/js.cookie.min.js"></script>
 	<script src="../lib/sm4.js"></script>
 
-	<script src="../js/my-login.js" type="module"></script>
-	<script src="../js/ukey.js" type="module"></script>
 	<script src="../js/crypto.js" type="module"></script>
+	<script src="../js/my-login.js" type="module"></script>
 </body>
 
 <script type="module">
@@ -65,7 +76,7 @@
 		alert("请先进行登录认证");
 		window.location.href = '/index.html';
 	} else {
-		$("#username")[0].innerHTML = `欢迎您， ${signedUsername.slice(2).replace(/\..+$/,'')}`;
+		$("#username")[0].innerHTML = `欢迎您， ${signedUsername.slice(2).replace(/\..+$/, '')}`;
 	}
 </script>
 
@@ -119,7 +130,7 @@
 		}
 	}
 
-	window.loginOutClick = async function() {
+	window.loginOutClick = async function () {
 		const response = await fetch('/user/loginOut');
 
 		if (response.ok) {

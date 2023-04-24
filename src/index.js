@@ -2,14 +2,17 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import fileUpload from "express-fileupload";
 import session, { MemoryStore } from "express-session";
 //导入user的路由
 import UserRouter from './router/users.js';
+import FileRouter from './router/file.js';
 
 const app = express();
 app.use(cors());
 
 app.use(cookieParser('secret'));
+app.use(fileUpload());
 
 app.use(session({
     store: new MemoryStore(),
@@ -38,6 +41,7 @@ app.use((req, res, next) => {
 })
 
 app.use('/user', UserRouter);
+app.use('/file', FileRouter);
 
 const port = 80;
 
